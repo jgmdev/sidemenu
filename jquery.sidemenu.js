@@ -6,12 +6,14 @@
 
 $.fn.sideMenu = function(options) {
     var defaults = {
-        width: 300,
+        width: null,
         position: "right",
         duration: 1000,
         button: null,
         hideButton: null,
         zIndex: 5000,
+        scroll: false,
+        rememberStatus: false,
         onShow: null,
         onHide: null
     };
@@ -20,6 +22,10 @@ $.fn.sideMenu = function(options) {
 
     this.each(function() {
         var sideMenuParent = this;
+
+        if(!settings.width){
+            settings.width = $(this).outerWidth(true);
+        }
 
         $(this).css({
             display: "none",
@@ -88,12 +94,34 @@ $.fn.sideMenu = function(options) {
                 }
             }
         });
+
+        if(settings.scroll){
+            $(window).scroll(function() {
+                if($(sideMenuParent).css("display") == "block"){
+                    $(sideMenuParent).css({top: $(window).scrollTop()});
+                }
+            });
+        }
+
+        if(settings.rememberStatus){
+            if(localStorage){
+                if(
+                    localStorage.getItem(settings.button) == "open"
+                    &&
+                    //Dont do it on small screens
+                    ($(window).width() > $(sideMenuParent).width()*2)
+                )
+                {
+                    showSideMenu(sideMenuParent);
+                }
+            }
+        }
     });
 
     function showSideMenu(menu){
         $(menu).css({
             display: "block",
-            height: $(window).height()
+            height: $(document).height()
         });
 
         if(settings.position == "right"){
@@ -101,15 +129,31 @@ $.fn.sideMenu = function(options) {
                 {
                     left: $(window).width() - settings.width
                 },
-                settings.duration
+                settings.duration,
+                function(){
+                    $(menu).css({
+                        position: "absolute"
+                    });
+                }
             );
         } else{
             $(menu).animate(
                 {
                     left: 0
                 },
-                settings.duration
+                settings.duration,
+                function(){
+                    $(menu).css({
+                        position: "absolute"
+                    });
+                }
             );
+        }
+
+        if(settings.rememberStatus){
+            if(localStorage){
+                localStorage.setItem(settings.button, "open");
+            }
         }
 
         if(settings.onShow){
@@ -118,6 +162,10 @@ $.fn.sideMenu = function(options) {
     }
 
     function hideSideMenu(menu){
+        $(menu).css({
+            position: "fixed"
+        });
+
         if(settings.position == "right"){
             $(menu).animate(
                 {
@@ -138,6 +186,12 @@ $.fn.sideMenu = function(options) {
                     $(menu).css({display: "none"});
                 }
             );
+        }
+
+        if(settings.rememberStatus){
+            if(localStorage){
+                localStorage.setItem(settings.button, "");
+            }
         }
 
         if(settings.onHide){
