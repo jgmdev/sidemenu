@@ -1,7 +1,14 @@
+/**
+ * Copyright 2016, Jefferson González (https://github.com/jgmdev/sidemenu)
+ * This file is licensed with the MIT License, check the LICENSE file
+ * for version and details or visit https://opensource.org/licenses/MIT
+ */
+
 $.fn.sideMenu = function(options) {
     var defaults = {
         width: 300,
         position: "right",
+        duration: 1000,
         button: null,
         hideButton: null,
         zIndex: 5000,
@@ -12,6 +19,8 @@ $.fn.sideMenu = function(options) {
     var settings = $.extend({}, defaults, options);
 
     this.each(function() {
+        var sideMenuParent = this;
+
         $(this).css({
             display: "none",
             position: "fixed",
@@ -30,12 +39,6 @@ $.fn.sideMenu = function(options) {
             });
         }
 
-        $(window).resize(function(){
-
-        });
-
-        var sideMenuParent = this;
-
         if(settings.button){
             $(settings.button).click(function(event){
                 if($(sideMenuParent).css("display") == "none"){
@@ -45,12 +48,6 @@ $.fn.sideMenu = function(options) {
                 }
                 event.preventDefault();
             });
-
-            /*$(settings.button).hover(
-                function(){
-                    showSideMenu(sideMenuParent);
-                }
-            );*/
         }
 
         if(settings.hideButton){
@@ -59,6 +56,38 @@ $.fn.sideMenu = function(options) {
                 event.preventDefault();
             });
         }
+
+        $(window).resize(function(){
+            if($(sideMenuParent).css("display") == "block"){
+                if(settings.position == "right"){
+                    $(sideMenuParent).css(
+                        {
+                            left: $(window).width() - settings.width
+                        }
+                    );
+                } else{
+                    $(sideMenuParent).css(
+                        {
+                            left: 0
+                        }
+                    );
+                }
+            } else{
+                if(settings.position == "right"){
+                    $(sideMenuParent).css(
+                        {
+                            left: $(window).width()
+                        }
+                    );
+                } else{
+                    $(sideMenuParent).css(
+                        {
+                            left: "-" + settings.width
+                        }
+                    );
+                }
+            }
+        });
     });
 
     function showSideMenu(menu){
@@ -72,14 +101,14 @@ $.fn.sideMenu = function(options) {
                 {
                     left: $(window).width() - settings.width
                 },
-                1000
+                settings.duration
             );
         } else{
             $(menu).animate(
                 {
                     left: 0
                 },
-                1000
+                settings.duration
             );
         }
 
@@ -94,7 +123,7 @@ $.fn.sideMenu = function(options) {
                 {
                     left: $(window).width()
                 },
-                1000,
+                settings.duration,
                 function(){
                     $(menu).css({display: "none"});
                 }
@@ -104,7 +133,7 @@ $.fn.sideMenu = function(options) {
                 {
                     left: "-" + settings.width
                 },
-                1000,
+                settings.duration,
                 function(){
                     $(menu).css({display: "none"});
                 }
