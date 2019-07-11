@@ -37,7 +37,7 @@ $.fn.sideMenu = function(options) {
 
         if(settings.position == "right"){
             $(this).css({
-                left: $(window).width()
+                right: -($(this).width())
             });
         } else {
             $(this).css({
@@ -63,44 +63,8 @@ $.fn.sideMenu = function(options) {
             });
         }
 
-        $(window).resize(function(){
-            if($(sideMenuParent).css("display") == "block"){
-                if(settings.position == "right"){
-                    $(sideMenuParent).css(
-                        {
-                            left: $(window).width() - settings.width
-                        }
-                    );
-                } else{
-                    $(sideMenuParent).css(
-                        {
-                            left: 0
-                        }
-                    );
-                }
-            } else{
-                if(settings.position == "right"){
-                    $(sideMenuParent).css(
-                        {
-                            left: $(window).width()
-                        }
-                    );
-                } else{
-                    $(sideMenuParent).css(
-                        {
-                            left: "-" + settings.width
-                        }
-                    );
-                }
-            }
-        });
-
         if(settings.scroll){
-            $(window).scroll(function() {
-                if($(sideMenuParent).css("display") == "block"){
-                    $(sideMenuParent).css({top: $(window).scrollTop()});
-                }
-            });
+            $(sideMenuParent).css("overflowY", "auto");
         }
 
         if(settings.rememberStatus){
@@ -127,7 +91,7 @@ $.fn.sideMenu = function(options) {
         if(settings.position == "right"){
             $(menu).animate(
                 {
-                    left: $(window).width() - settings.width
+                    right: 0
                 },
                 settings.duration,
                 function(){
@@ -169,7 +133,7 @@ $.fn.sideMenu = function(options) {
         if(settings.position == "right"){
             $(menu).animate(
                 {
-                    left: $(window).width()
+                    right: -($(menu).width())
                 },
                 settings.duration,
                 function(){
